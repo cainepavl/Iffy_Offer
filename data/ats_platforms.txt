@@ -1,0 +1,59 @@
+# Known legitimate ATS (Applicant Tracking System) and recruitment platforms
+# Emails originating from these domains are likely sent on behalf of real companies.
+# This does NOT guarantee the email is legitimate — a scammer could spoof the
+# display name while sending from their own domain — but if the *actual* sending
+# domain is one of these, it's a positive signal.
+# Lines starting with # are comments and are ignored by the loader.
+
+# --- Major ATS platforms used by enterprises ---
+greenhouse.io
+lever.co
+workday.com
+myworkday.com
+wd1.myworkday.com
+wd3.myworkday.com
+wd5.myworkday.com
+taleo.net
+successfactors.com
+sap.com
+icims.com
+bamboohr.com
+smartrecruiters.com
+jobvite.com
+ashbyhq.com
+recruitee.com
+breezy.hr
+pinpointhq.com
+comeet.co
+
+# --- Payroll / HR platforms that also handle recruiting ---
+rippling.com
+gusto.com
+dayforce.com
+ceridian.com
+workforcenow.adp.com
+adp.com
+
+# --- Job boards that send on behalf of employers ---
+linkedin.com
+indeed.com
+ziprecruiter.com
+glassdoor.com
+monster.com
+careerbuilder.com
+dice.com
+hired.com
+wellfound.com
+angellist.com
+simplyhired.com
+flexjobs.com
+remote.co
+weworkremotely.com
+remoteok.com
+builtin.com
+
+# --- Background check / onboarding platforms (sometimes send offer-adjacent emails) ---
+checkr.com
+sterlingcheck.com
+hireright.com
+asurint.com

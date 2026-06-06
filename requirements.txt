@@ -1,0 +1,10 @@
+# BS_DTect runtime dependencies
+
+# dnspython  — DNS lookups for MX, SPF (TXT), and DMARC records.
+dnspython>=2.6
+
+# python-whois — WHOIS lookups to determine domain registration date.
+python-whois>=0.9
+
+# python-Levenshtein — Fast C-backed edit-distance for typosquatting detection.
+python-Levenshtein>=0.25

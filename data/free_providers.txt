@@ -1,0 +1,58 @@
+# Free / consumer email providers
+# Legitimate companies almost never recruit directly from these domains.
+# A job offer from hr@gmail.com or recruiter@yahoo.com is a strong red flag.
+# Lines starting with # are comments and are ignored by the loader.
+
+# --- Major English-language free providers ---
+gmail.com
+googlemail.com
+yahoo.com
+yahoo.co.uk
+yahoo.co.in
+yahoo.com.au
+hotmail.com
+hotmail.co.uk
+outlook.com
+live.com
+live.co.uk
+msn.com
+aol.com
+icloud.com
+me.com
+mac.com
+
+# --- Privacy-focused / alt providers (often abused for throwaway addresses) ---
+protonmail.com
+proton.me
+tutanota.com
+tutamail.com
+tuta.io
+mailfence.com
+disroot.org
+riseup.net
+
+# --- Other popular free providers ---
+mail.com
+gmx.com
+gmx.net
+gmx.de
+zoho.com
+fastmail.com
+fastmail.fm
+yandex.com
+yandex.ru
+inbox.com
+hushmail.com
+lavabit.com
+guerrillamail.com
+sharklasers.com
+mailinator.com
+tempmail.com
+10minutemail.com
+throwam.com
+maildrop.cc
+trashmail.com
+spamgourmet.com
+yopmail.com
+throwam.com
+temp-mail.org
