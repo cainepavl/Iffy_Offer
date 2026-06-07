@@ -1,4 +1,4 @@
-# BS_DTect — Job Offer Email Legitimacy Checker
+# Iffy_Offer — Job Offer Email Legitimacy Checker
 
 A desktop tool that analyses a job-offer email and estimates whether it's from
 a legitimate company or a phishing/scam attempt.
