@@ -1,5 +1,11 @@
 # Iffy_Offer — Job Offer Email Legitimacy Checker
 
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/cainepavl/Iffy_Offer/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-informational.svg)]()
+[![UI: Tkinter](https://img.shields.io/badge/UI-Tkinter-orange.svg)]()
+
 A desktop tool that analyses a job-offer email and estimates whether it's from
 a legitimate company or a phishing/scam attempt.
 
@@ -36,15 +42,57 @@ raw email headers), click **Analyze**, and get a risk verdict in seconds.
 
 **Requirements:** Python 3.10 or newer
 
+### 1. Verify your Python version
+
+```bash
+python3 --version
+```
+
+If the output is below `3.10`, [download a newer release from python.org](https://www.python.org/downloads/) before continuing.
+
+### 2. Clone the repository
+
 ```bash
 git clone https://github.com/cainepavl/Iffy_Offer.git
 cd Iffy_Offer
+```
+
+### 3. Create and activate a virtual environment (recommended)
+
+```bash
+python3 -m venv venv
+```
+
+```bash
+# Linux / macOS
+source venv/bin/activate
+
+# Windows — PowerShell
+venv\Scripts\Activate.ps1
+
+# Windows — Command Prompt
+venv\Scripts\activate.bat
+```
+
+Your prompt will change to show `(venv)` when the environment is active.
+
+### 4. Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+### 5. Launch the app
+
+```bash
 python main.py
 ```
 
-Tkinter comes with the Python standard library. On some Linux systems you may
-need to install it separately:
+---
+
+### Tkinter note
+
+Tkinter is part of the Python standard library and is included automatically on Windows (via the python.org installer) and macOS. On Linux it may need to be installed separately:
 
 ```bash
 # Debian / Ubuntu
@@ -52,7 +100,27 @@ sudo apt install python3-tk
 
 # Fedora
 sudo dnf install python3-tkinter
+
+# macOS (if missing after a Homebrew Python install)
+brew install python-tk
 ```
+
+### WSL (Windows Subsystem for Linux)
+
+Iffy Offer opens a GUI window, so WSL needs a display backend to render it.
+
+**Windows 11 — WSL 2 with WSLg (recommended)**  
+WSLg ships built into Windows 11 (21H2 and later) and handles GUI apps automatically. Follow the Linux installation steps above — no extra display setup needed.
+
+**Windows 10 — WSL 2 without WSLg**  
+Install an X server on the Windows side (e.g. [VcXsrv](https://sourceforge.net/projects/vcxsrv/)), launch it with "Disable access control" checked, then export the display variable before running the app:
+
+```bash
+export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0.0
+python main.py
+```
+
+> Also make sure `python3-tk` or `python3-tkinter` is installed inside your WSL distro — see the Tkinter note above.
 
 ---
 
