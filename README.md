@@ -26,7 +26,9 @@ raw email headers), click **Analyze**, and get a risk verdict in seconds.
 
 ## Screenshots
 
-> *(Add screenshots here once the app is running)*
+| Dark Mode | Light Mode |
+|-----------|------------|
+| ![Dark mode](screenshots/dark.png) | ![Light mode](screenshots/light.png) |
 
 ---
 
@@ -35,8 +37,8 @@ raw email headers), click **Analyze**, and get a risk verdict in seconds.
 **Requirements:** Python 3.10 or newer
 
 ```bash
-git clone https://github.com/your-username/BS_DTect.git
-cd BS_DTect
+git clone https://github.com/cainepavl/Iffy_Offer.git
+cd Iffy_Offer
 pip install -r requirements.txt
 python main.py
 ```
@@ -105,7 +107,7 @@ Reply-To: different@otherdomain.com
 
 Copy everything from the **very first line** down to (but not including) the blank
 line that separates the headers from the email body. Paste that block into the
-**Raw Headers** field in BS_DTect.
+**Raw Headers** field in Iffy Offer.
 
 > **Tip:** The header block always ends at the first completely blank line. Everything
 > after that blank line is the body of the email — you don't need it.
@@ -133,11 +135,11 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 **Verdict bands:**
 
-| Score      | Verdict        |
-| ---------- | -------------- |
-| ≥ 0        | 🟢 LOW RISK    |
-| –1 to –29  | 🟡 MEDIUM RISK |
-| ≤ –30      | 🔴 HIGH RISK   |
+| Score      | Verdict          |
+| ---------- | ---------------- |
+| ≥ 0        | 🟢 Looks Legit   |
+| –1 to –29  | 🟡 Iffy          |
+| ≤ –30      | 🔴 Yikes!        |
 
 ---
 
@@ -174,12 +176,20 @@ To add a new check, see the **Adding a New Check** section in `CLAUDE.md`.
 
 ## License
 
-MIT — see `LICENSE` for details.
+**MIT License** — Copyright (c) 2026 Caine Pavlosky
+
+You are free to use, copy, modify, and distribute this software for any
+purpose, with or without modification, as long as the copyright notice and
+permission notice are preserved. See the [`LICENSE`](LICENSE) file for the
+full license text.
 
 ---
 
 ## Disclaimer
 
-This tool is provided for **educational and personal use only**. It does not
-constitute legal, security, or professional advice. Always verify suspicious
-emails through official channels before taking action.
+Iffy Offer is provided for **educational and personal use only**. It is a
+heuristic tool and is **not 100% accurate** — a sophisticated attacker can
+pass some checks (e.g. by registering a domain with proper SPF/DMARC records).
+Always verify suspicious emails through official company channels before
+taking any action. This tool does not constitute legal, security, or
+professional advice.

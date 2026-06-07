@@ -1,7 +1,7 @@
 """
 gui.py
 ------
-Tkinter GUI for BS_DTect.
+Tkinter GUI for Iffy Offer.
 
 Layout (top to bottom):
   ┌─────────────────────────────────────────────┐
@@ -20,7 +20,7 @@ Layout (top to bottom):
   │  ▌ [✓] Check name       detail text   (+0) │
   │  ▌ [✗] Check name       detail text  (-30) │
   │  ─────────────────────────────────────────  │
-  │  VERDICT: HIGH RISK  (score: –45)           │  ← verdict panel
+  │  VERDICT: Yikes!  (score: –45)               │  ← verdict panel
   └─────────────────────────────────────────────┘
 
 Dark/light mode:
@@ -65,6 +65,7 @@ DARK_PALETTE = {
     'verdict_low':  '#a6e3a1',
     'verdict_med':  '#f9e2af',
     'verdict_high': '#f38ba8',
+    'disclaimer':   '#6c7086',
     'btn_bg':       '#89b4fa',
     'btn_fg':       '#1e1e2e',
     'clear_btn_bg': '#fab387',   # peach — warm contrast to the blue Analyze button
@@ -89,6 +90,7 @@ LIGHT_PALETTE = {
     'verdict_low':  '#40a02b',
     'verdict_med':  '#df8e1d',
     'verdict_high': '#d20f39',
+    'disclaimer':   '#8c8fa1',
     'btn_bg':       '#1e66f5',
     'btn_fg':       '#ffffff',
     'clear_btn_bg': '#fe640b',   # orange — warm contrast to the blue Analyze button
@@ -127,7 +129,7 @@ class BSDTectApp:
 
     def _build_ui(self):
         """Create all widgets. Called once at startup."""
-        self.root.title('BS_DTect — Job Offer Email Checker')
+        self.root.title('Iffy Offer — Job Offer Email Checker')
         self.root.geometry('960x780')
         self.root.resizable(True, True)
         self.root.minsize(740, 580)
@@ -147,7 +149,7 @@ class BSDTectApp:
 
         self.title_label = tk.Label(
             self.title_frame,
-            text='BS_DTect',
+            text='Iffy Offer',
             font=('Helvetica', 22, 'bold'),
         )
         self.title_label.pack(side='left')
@@ -319,6 +321,14 @@ class BSDTectApp:
         )
         self.verdict_label.pack(fill='x')
 
+        self.disclaimer_label = tk.Label(
+            self.root_frame,
+            text='Heuristic tool — not 100% accurate. Always verify through official channels.',
+            font=('Helvetica', 9, 'italic'),
+            pady=3,
+        )
+        self.disclaimer_label.pack_forget()
+
     # ------------------------------------------------------------------
     # Analysis orchestration
     # ------------------------------------------------------------------
@@ -330,6 +340,7 @@ class BSDTectApp:
         self.header_text.delete('1.0', 'end')
         self._clear_results()
         self.verdict_frame.pack_forget()
+        self.disclaimer_label.pack_forget()
         self._show_status('')
         p = self.palette
         self.placeholder = tk.Label(
@@ -364,6 +375,7 @@ class BSDTectApp:
         self._show_status('Running checks (DNS and WHOIS may take a few seconds)…')
         self._clear_results()
         self.verdict_frame.pack_forget()
+        self.disclaimer_label.pack_forget()
 
         thread = threading.Thread(
             target=self._run_analysis_worker,
@@ -518,7 +530,9 @@ class BSDTectApp:
             fg=p['btn_fg'] if self.mode == 'light' else p['bg'],
             bg=v_color,
         )
-        self.verdict_frame.pack(fill='x', padx=16, pady=(0, 16))
+        self.verdict_frame.pack(fill='x', padx=16, pady=(0, 4))
+        self.disclaimer_label.configure(bg=p['bg'], fg=p['disclaimer'])
+        self.disclaimer_label.pack(fill='x', padx=16, pady=(0, 12))
 
     def _clear_results(self):
         """Remove all widgets from the results inner frame and reset label list."""
@@ -590,6 +604,9 @@ class BSDTectApp:
 
         if hasattr(self, 'placeholder') and self.placeholder.winfo_exists():
             self.placeholder.configure(bg=p['surface'], fg=p['text_dim'])
+
+        if hasattr(self, 'disclaimer_label') and self.disclaimer_label.winfo_exists():
+            self.disclaimer_label.configure(bg=p['bg'], fg=p['disclaimer'])
 
     # ------------------------------------------------------------------
     # Scroll helpers

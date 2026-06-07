@@ -11,9 +11,9 @@ Scoring philosophy:
   - The final score maps to one of three verdict bands.
 
 Verdict bands (chosen to mirror real-world email risk tooling conventions):
-  Score ≥  0  →  LOW RISK     (green)  — No significant red flags found.
-  Score –1 to –29  →  MEDIUM RISK  (yellow) — Some concerns; verify independently.
-  Score ≤ –30  →  HIGH RISK    (red)   — Multiple red flags; treat as probable scam.
+  Score ≥  0  →  Looks Legit  (green)  — No significant red flags found.
+  Score –1 to –29  →  Iffy         (yellow) — Some concerns; verify independently.
+  Score ≤ –30  →  Yikes!       (red)   — Multiple red flags; treat as probable scam.
 
 Score deltas (all negative values mean "more suspicious"):
 
@@ -336,13 +336,13 @@ def build_score(
     # Final verdict
     # ------------------------------------------------------------------
     if score >= 0:
-        verdict = 'LOW RISK'
+        verdict = 'Looks Legit'
         color   = 'green'
     elif score >= -29:
-        verdict = 'MEDIUM RISK'
+        verdict = 'Iffy'
         color   = 'yellow'
     else:
-        verdict = 'HIGH RISK'
+        verdict = 'Yikes!'
         color   = 'red'
 
     return ScorerOutput(

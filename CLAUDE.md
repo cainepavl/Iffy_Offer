@@ -1,4 +1,4 @@
-# CLAUDE.md — BS_DTect Project Reference
+# CLAUDE.md — Iffy Offer Project Reference
 
 This file is for Claude Code sessions. It documents the project structure,
 how to run the tool, and how to extend it.
@@ -7,8 +7,8 @@ how to run the tool, and how to extend it.
 
 ## Project Purpose
 
-BS_DTect (Bogus Sender Detector) analyses a job-offer email and estimates
-whether it is from a legitimate company or a phishing/scam attempt.
+Iffy Offer analyses a job-offer email and estimates whether it is from a
+legitimate company or a phishing/scam attempt.
 
 **What it checks:**
 - Is the sender's email domain a free provider (gmail, yahoo, etc.)?
@@ -85,9 +85,9 @@ Negative = more suspicious. Starting score is 0.
 | Display name spoofing  | –15   |
 
 **Verdict bands:**
-- Score ≥ 0    → LOW RISK (green)
-- –1 to –29   → MEDIUM RISK (yellow)
-- ≤ –30        → HIGH RISK (red)
+- Score ≥ 0    → Looks Legit (green)
+- –1 to –29   → Iffy (yellow)
+- ≤ –30        → Yikes! (red)
 
 Thresholds and deltas are defined in `scorer.py` — easy to adjust.
 
