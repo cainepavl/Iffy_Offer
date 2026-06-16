@@ -1,4 +1,4 @@
-# BS_DTect runtime dependencies
+# Iffy Offer runtime dependencies
 
 # dnspython  — DNS lookups for MX, SPF (TXT), and DMARC records.
 dnspython>=2.6

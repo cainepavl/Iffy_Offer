@@ -9,12 +9,12 @@ without touching the application logic.
 """
 
 import tkinter as tk
-from gui import BSDTectApp
+from gui import IffyOfferApp
 
 
 def main():
     root = tk.Tk()
-    app  = BSDTectApp(root)
+    app  = IffyOfferApp(root)
     app.run()
 
 

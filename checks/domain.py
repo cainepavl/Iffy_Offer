@@ -14,7 +14,17 @@ can display and weight the results however they like.
 
 import re
 import os
-from Levenshtein import distance as levenshtein_distance
+
+try:
+    from Levenshtein import distance as levenshtein_distance
+except ImportError:
+    # python-Levenshtein is the preferred fast C extension, but if it's missing
+    # we fall back to difflib so the app still launches. Install the package from
+    # requirements.txt to get the faster implementation.
+    from difflib import SequenceMatcher as _SM
+    def levenshtein_distance(a: str, b: str) -> int:
+        ratio = _SM(None, a, b).ratio()
+        return round((1 - ratio) * max(len(a), len(b)))
 
 
 # ---------------------------------------------------------------------------

@@ -73,7 +73,6 @@ def parse_headers(raw_header_text: str) -> dict:
     # Count Received: headers — each one represents a server hop.
     # An unusually long chain (10+) can indicate message laundering, though
     # this is a weak signal and we don't penalise it directly.
-    received_count = len(msg.keys())   # msg.keys() returns all header names
     received_count = sum(1 for k in msg.keys() if k.lower() == 'received')
 
     return {

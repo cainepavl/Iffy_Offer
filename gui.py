@@ -108,7 +108,7 @@ STATUS_ICONS = {
 }
 
 
-class BSDTectApp:
+class IffyOfferApp:
     """Main application class. Owns the root Tk window and all widgets."""
 
     def __init__(self, root: tk.Tk):

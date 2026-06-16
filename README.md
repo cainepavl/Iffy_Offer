@@ -14,6 +14,17 @@ raw email headers), click **Analyze**, and get a risk verdict in seconds.
 
 ---
 
+## Why I built this
+
+I kept getting job-offer emails that felt off — free-provider addresses claiming
+to be from Fortune 500 companies, brand-new domains with no email infrastructure,
+display names that didn't match the actual sender. I wanted a quick way to
+sanity-check them without manually digging through DNS records and WHOIS every
+time. Iffy Offer automates those checks and gives a plain-English verdict in a
+few seconds. It won't catch every scam, but it catches the obvious ones fast.
+
+---
+
 ## Features
 
 - **Domain analysis** — detects homoglyph substitutions (`amaz0n.com`) and
@@ -217,6 +228,9 @@ Each check contributes a signed integer delta to a cumulative risk score.
   require sandboxing that is beyond this tool's scope.
 - **Does not follow or analyse links** in the email body.
 - **Does not contact the company** to verify the recruiter's identity.
+- **Does not send your data anywhere** — the only outbound network calls are
+  standard DNS and WHOIS queries for the domain you enter. No email content,
+  no personal information, and no usage data is ever transmitted.
 - **Cannot guarantee accuracy** — a well-resourced attacker can pass some of
   these checks (e.g. by setting up SPF/DMARC on a fake domain). Use this tool
   as one input among several, not as a definitive verdict.

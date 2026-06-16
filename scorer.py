@@ -59,7 +59,7 @@ class ScorerOutput:
     """
     results: list = field(default_factory=list)   # list of CheckResult
     score:   int  = 0
-    verdict: str  = ''     # 'LOW RISK' | 'MEDIUM RISK' | 'HIGH RISK'
+    verdict: str  = ''     # 'Looks Legit' | 'Iffy' | 'Yikes!'
     color:   str  = ''     # 'green'   | 'yellow'       | 'red'
 
 
