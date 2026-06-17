@@ -275,3 +275,11 @@ pass some checks (e.g. by registering a domain with proper SPF/DMARC records).
 Always verify suspicious emails through official company channels before
 taking any action. This tool does not constitute legal, security, or
 professional advice.
+
+## 📩 Contact/Connect
+
+**Caine Pavlosky**
+
+* Email: [cainepavl@outlook.com](mailto:cainepavl@outlook.com)
+* Portfolio: [fairdinkumstudios.com](https://fairdinkumstudios.com/)
+* LinkedIn: [linkedin.com/in/cainepavlosky008](https://linkedin.com/in/cainepavlosky008)
