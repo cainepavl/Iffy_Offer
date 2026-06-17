@@ -47,6 +47,8 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 |-----------|------------|
 | ![Dark mode](screenshots/dark.png) | ![Light mode](screenshots/light.png) |
 
+![Portfolio thumbnail](screenshots/portfolio-thumbnail.png)
+
 ---
 
 ## 🛠️ Installation
