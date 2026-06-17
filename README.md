@@ -6,6 +6,8 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-informational.svg)]()
 [![UI: Tkinter](https://img.shields.io/badge/UI-Tkinter-orange.svg)]()
 
+![Portfolio thumbnail](screenshots/portfolio-thumbnail.png)
+
 A desktop tool that analyses a job-offer email and estimates whether it's from
 a legitimate company or a phishing/scam attempt.
 
@@ -46,8 +48,6 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 | Dark Mode | Light Mode |
 |-----------|------------|
 | ![Dark mode](screenshots/dark.png) | ![Light mode](screenshots/light.png) |
-
-![Portfolio thumbnail](screenshots/portfolio-thumbnail.png)
 
 ---
 
