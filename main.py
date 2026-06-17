@@ -1,7 +1,7 @@
 """
 main.py
 -------
-Entry point for BS_DTect.
+Entry point for Iffy Offer.
 
 Just creates the Tkinter root window and hands control to the App class.
 Keeping this file minimal means it's easy to swap the GUI toolkit later

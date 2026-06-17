@@ -5,7 +5,7 @@ Tkinter GUI for Iffy Offer.
 
 Layout (top to bottom):
   ┌─────────────────────────────────────────────┐
-  │  BS_DTect                      [☀ / ☾ mode] │  ← title bar frame
+  │  Iffy Offer                    [☀ / ☾ mode] │  ← title bar frame
   │  ─────────────────────────────────────────  │  ← separator
   ├─────────────────────────────────────────────┤
   │  Company Name: [___________________________]│  ← input frame

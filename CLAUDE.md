@@ -29,7 +29,7 @@ legitimate company or a phishing/scam attempt.
 ## Directory Structure
 
 ```
-BS_DTect/
+Iffy_Offer/
 ├── main.py              Entry point — creates Tk root and launches App
 ├── gui.py               Tkinter GUI (BSDTectApp class), dark/light mode
 ├── scorer.py            Aggregates check results into a risk score + verdict

@@ -1,4 +1,4 @@
-# Iffy_Offer — Job Offer Email Legitimacy Checker
+# 🕵️ Iffy_Offer — Job Offer Email Legitimacy Checker
 
 [![Version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/cainepavl/Iffy_Offer/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -14,7 +14,7 @@ raw email headers), click **Analyze**, and get a risk verdict in seconds.
 
 ---
 
-## Why I built this
+## 💡 Why I built this
 
 I kept getting job-offer emails that felt off — free-provider addresses claiming
 to be from Fortune 500 companies, brand-new domains with no email infrastructure,
@@ -25,7 +25,7 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 
 ---
 
-## Features
+## ✨ Features
 
 - **Domain analysis** — detects homoglyph substitutions (`amaz0n.com`) and
   typosquatted domains (`amzon-careers.com`)
@@ -41,7 +41,7 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 
 ---
 
-## Screenshots
+## 📸 Screenshots
 
 | Dark Mode | Light Mode |
 |-----------|------------|
@@ -49,11 +49,11 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 
 ---
 
-## Installation
+## 🛠️ Installation
 
 **Requirements:** Python 3.10 or newer
 
-### 1. Verify your Python version
+### 1. 🐍 Verify your Python version
 
 ```bash
 python3 --version
@@ -61,14 +61,14 @@ python3 --version
 
 If the output is below `3.10`, [download a newer release from python.org](https://www.python.org/downloads/) before continuing.
 
-### 2. Clone the repository
+### 2. 📥 Clone the repository
 
 ```bash
 git clone https://github.com/cainepavl/Iffy_Offer.git
 cd Iffy_Offer
 ```
 
-### 3. Create and activate a virtual environment (recommended)
+### 3. 📦 Create and activate a virtual environment (recommended)
 
 ```bash
 python3 -m venv venv
@@ -87,13 +87,13 @@ venv\Scripts\activate.bat
 
 Your prompt will change to show `(venv)` when the environment is active.
 
-### 4. Install dependencies
+### 4. ⬇️ Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Launch the app
+### 5. ▶️ Launch the app
 
 ```bash
 python main.py
@@ -101,7 +101,7 @@ python main.py
 
 ---
 
-### Tkinter note
+### 📝 Tkinter note
 
 Tkinter is part of the Python standard library and is included automatically on Windows (via the python.org installer) and macOS. On Linux it may need to be installed separately:
 
@@ -116,7 +116,7 @@ sudo dnf install python3-tkinter
 brew install python-tk
 ```
 
-### WSL (Windows Subsystem for Linux)
+### 🐧 WSL (Windows Subsystem for Linux)
 
 Iffy Offer opens a GUI window, so WSL needs a display backend to render it.
 
@@ -135,7 +135,7 @@ python main.py
 
 ---
 
-## Usage
+## 🚀 Usage
 
 1. **Company Name** — type the name of the company that supposedly sent the email
    (e.g. `Amazon`, `Google`, `Acme Corp`)
@@ -151,12 +151,12 @@ python main.py
 
 ---
 
-## Finding the Raw Header Block
+## 🔍 Finding the Raw Header Block
 
 The raw header block is the machine-readable metadata that sits above the email
 body. Every email has one; it's just hidden by default.
 
-### How to open it in common clients
+### 📬 How to open it in common clients
 
 | Client              | Steps                                                                                                |
 | ------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -167,7 +167,7 @@ body. Every email has one; it's just hidden by default.
 | **Thunderbird**     | Open the email → **View** menu → **Message Source** (or `Ctrl+U`)                                   |
 | **Yahoo Mail**      | Open the email → click the **⋯** menu → **View Raw Message**                                        |
 
-### What to copy
+### ✂️ What to copy
 
 Once the raw source is open you will see something like this at the very top:
 
@@ -193,7 +193,7 @@ line that separates the headers from the email body. Paste that block into the
 
 ---
 
-## How Scoring Works
+## 📊 How Scoring Works
 
 Each check contributes a signed integer delta to a cumulative risk score.
 
@@ -222,7 +222,7 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 ---
 
-## What This Tool Does NOT Do
+## 🚫 What This Tool Does NOT Do
 
 - **Does not open, scan, or execute attachments** — attachment inspection would
   require sandboxing that is beyond this tool's scope.
@@ -237,7 +237,7 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 ---
 
-## Limitations
+## ⚠️ Limitations
 
 - WHOIS lookups can fail for some TLDs (privacy shields, unsupported registries).
   The tool will show "unknown" for age rather than error out.
@@ -247,7 +247,7 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 ---
 
-## Extending
+## 🔧 Extending
 
 To add a new free provider or ATS platform, just add a line to
 `data/free_providers.txt` or `data/ats_platforms.txt`. No code changes required.
@@ -256,7 +256,7 @@ To add a new check, see the **Adding a New Check** section in `CLAUDE.md`.
 
 ---
 
-## License
+## 📄 License
 
 **MIT License** — Copyright (c) 2026 Caine Pavlosky
 
@@ -267,7 +267,7 @@ full license text.
 
 ---
 
-## Disclaimer
+## 🔔 Disclaimer
 
 Iffy Offer is provided for **educational and personal use only**. It is a
 heuristic tool and is **not 100% accurate** — a sophisticated attacker can
@@ -275,6 +275,8 @@ pass some checks (e.g. by registering a domain with proper SPF/DMARC records).
 Always verify suspicious emails through official company channels before
 taking any action. This tool does not constitute legal, security, or
 professional advice.
+
+---
 
 ## 📩 Contact/Connect
 
