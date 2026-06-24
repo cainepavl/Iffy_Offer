@@ -26,6 +26,8 @@ WHOIS limitations:
 """
 
 import whois
+import contextlib
+import io
 from datetime import datetime, timezone
 
 
@@ -42,7 +44,8 @@ def get_domain_age(domain: str) -> dict:
         }
     """
     try:
-        w = whois.whois(domain)
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            w = whois.whois(domain)
     except Exception as e:
         # WHOIS can fail for many reasons: network errors, blocked queries,
         # unsupported TLD, rate limiting. Treat as inconclusive.

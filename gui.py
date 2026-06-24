@@ -55,14 +55,14 @@ DARK_PALETTE = {
     'surface2':     '#313244',
     'border':       '#45475a',
     'text':         '#cdd6f4',
-    'text_dim':     '#a6adc8',
+    'text_dim':     '#c5c8d8',
     'accent':       '#89b4fa',
     'accent_hover': '#b4d0ff',
-    'ok':           '#a6e3a1',
+    'ok':           '#00ff41',
     'warning':      '#f9e2af',
     'fail':         '#f38ba8',
     'unknown':      '#cba6f7',
-    'verdict_low':  '#a6e3a1',
+    'verdict_low':  '#00ff41',
     'verdict_med':  '#f9e2af',
     'verdict_high': '#f38ba8',
     'disclaimer':   '#6c7086',
@@ -79,24 +79,24 @@ LIGHT_PALETTE = {
     'surface':      '#ffffff',
     'surface2':     '#e6e9ef',
     'border':       '#ccd0da',
-    'text':         '#4c4f69',
-    'text_dim':     '#6c6f85',
+    'text':         '#1e2030',
+    'text_dim':     '#3d4063',
     'accent':       '#1e66f5',
     'accent_hover': '#0a4ccf',
-    'ok':           '#40a02b',
+    'ok':           '#00aa2e',
     'warning':      '#df8e1d',
     'fail':         '#d20f39',
     'unknown':      '#8839ef',
-    'verdict_low':  '#40a02b',
+    'verdict_low':  '#00aa2e',
     'verdict_med':  '#df8e1d',
     'verdict_high': '#d20f39',
-    'disclaimer':   '#8c8fa1',
+    'disclaimer':   '#5c5f77',
     'btn_bg':       '#1e66f5',
     'btn_fg':       '#ffffff',
     'clear_btn_bg': '#fe640b',   # orange — warm contrast to the blue Analyze button
     'clear_btn_fg': '#ffffff',
     'mode_btn_bg':  '#ccd0da',
-    'mode_btn_fg':  '#4c4f69',
+    'mode_btn_fg':  '#1e2030',
 }
 
 STATUS_ICONS = {
@@ -130,9 +130,9 @@ class IffyOfferApp:
     def _build_ui(self):
         """Create all widgets. Called once at startup."""
         self.root.title('Iffy Offer — Job Offer Email Checker')
-        self.root.geometry('960x780')
+        self.root.geometry('960x1000')
         self.root.resizable(True, True)
-        self.root.minsize(740, 580)
+        self.root.minsize(740, 750)
 
         self.root_frame = tk.Frame(self.root)
         self.root_frame.pack(fill='both', expand=True)
@@ -211,15 +211,15 @@ class IffyOfferApp:
         # Row 2: Raw headers label + hint
         tk.Label(
             self.input_frame,
-            text='Raw Headers (optional):',
+            text='Raw Headers:',
             font=('Helvetica', 10, 'bold'),
         ).grid(row=2, column=0, sticky='nw', pady=(10, 2))
 
         tk.Label(
             self.input_frame,
             text='Paste the full header block from "Show Original" / "View Source" in your email client.',
-            font=('Helvetica', 8),
-            wraplength=440,
+            font=('Helvetica', 10),
+            wraplength=640,
             justify='left',
         ).grid(row=2, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
 
@@ -457,7 +457,11 @@ class IffyOfferApp:
             }.get(result.status, p['text'])
 
             # Card row — surface2 bg gives a subtle lift off the canvas
-            row = tk.Frame(self.results_inner, pady=6)
+            row = tk.Frame(
+                self.results_inner, pady=6,
+                highlightthickness=1,
+                highlightbackground=p['border'],
+            )
             row.pack(fill='x', padx=6, pady=(4, 0))
             row.configure(bg=p['surface2'])
 
@@ -483,7 +487,7 @@ class IffyOfferApp:
                 font=('Helvetica', 10, 'bold'),
                 fg=color,
                 bg=p['surface2'],
-                width=22,
+                width=26,
                 anchor='w',
             ).pack(side='left', padx=(0, 10))
 
@@ -507,7 +511,7 @@ class IffyOfferApp:
                 row,
                 text=result.detail,
                 font=('Helvetica', 9),
-                fg=p['text_dim'],
+                fg=p['text'],
                 bg=p['surface2'],
                 wraplength=500,
                 justify='left',
@@ -596,11 +600,15 @@ class IffyOfferApp:
         # Stripes are tk.Frame children — skip them to preserve status colours.
         for widget in self.results_inner.winfo_children():
             if isinstance(widget, tk.Frame):
-                widget.configure(bg=p['surface2'])
+                widget.configure(bg=p['surface2'], highlightbackground=p['border'])
                 for child in widget.winfo_children():
                     if isinstance(child, tk.Label):
                         child.configure(bg=p['surface2'])
                     # tk.Frame children are accent stripes — leave their bg alone
+
+        for lbl in self._detail_labels:
+            if lbl.winfo_exists():
+                lbl.configure(bg=p['surface2'], fg=p['text'])
 
         if hasattr(self, 'placeholder') and self.placeholder.winfo_exists():
             self.placeholder.configure(bg=p['surface'], fg=p['text_dim'])
