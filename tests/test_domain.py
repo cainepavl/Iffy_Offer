@@ -28,7 +28,7 @@ class TestExtractDomain:
     def test_angle_bracket_format(self):
         assert extract_domain("Amazon HR <hr@amazon.com>") == "amazon.com"
 
-    def test_uppercase_normalised(self):
+    def test_uppercase_normalized(self):
         assert extract_domain("HR@AMAZON.COM") == "amazon.com"
 
     def test_subdomain(self):

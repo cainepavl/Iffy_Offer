@@ -55,7 +55,7 @@ class CheckResult:
 class ScorerOutput:
     """
     The complete output from the scorer: a list of individual results,
-    a total score, and a verdict string with associated colour category.
+    a total score, and a verdict string with associated color category.
     """
     results: list = field(default_factory=list)   # list of CheckResult
     score:   int  = 0

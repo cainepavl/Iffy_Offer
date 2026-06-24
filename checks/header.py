@@ -107,7 +107,7 @@ def check_display_name_mismatch(parsed: dict, company_name: str) -> dict:
         }
     """
     if parsed.get('parse_error') or not parsed.get('from_display'):
-        return {'mismatch': False, 'detail': 'No display name to analyse.'}
+        return {'mismatch': False, 'detail': 'No display name to analyze.'}
 
     display = parsed['from_display'].lower()
     domain  = parsed.get('from_domain', '').lower()

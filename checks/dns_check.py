@@ -94,7 +94,7 @@ def check_spf_record(domain: str) -> dict:
     Check whether the domain publishes an SPF record.
 
     SPF is a TXT record at the domain's root that starts with "v=spf1".
-    It tells receiving mail servers which IP addresses are authorised to
+    It tells receiving mail servers which IP addresses are authorized to
     send email claiming to be from this domain.
 
     A missing SPF record doesn't prove fraud — small domains sometimes

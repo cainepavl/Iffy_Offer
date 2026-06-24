@@ -7,7 +7,7 @@ how to run the tool, and how to extend it.
 
 ## Project Purpose
 
-Iffy Offer analyses a job-offer email and estimates whether it is from a
+Iffy Offer analyzes a job-offer email and estimates whether it is from a
 legitimate company or a phishing/scam attempt.
 
 **What it checks:**
@@ -133,7 +133,7 @@ thread-safe. All UI updates happen in `_poll_result_queue()` on the main thread.
 
 ## Theme System
 
-Two palette dicts (`DARK_PALETTE`, `LIGHT_PALETTE`) in `gui.py` define all colours.
-`_apply_theme()` walks all widgets and re-applies colours from the active palette.
-To change a colour, edit the dict. To add a new semantic colour, add a key to
+Two palette dicts (`DARK_PALETTE`, `LIGHT_PALETTE`) in `gui.py` define all colors.
+`_apply_theme()` walks all widgets and re-applies colors from the active palette.
+To change a color, edit the dict. To add a new semantic color, add a key to
 both dicts and reference it in `_apply_theme()`.

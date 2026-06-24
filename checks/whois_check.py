@@ -74,7 +74,7 @@ def get_domain_age(domain: str) -> dict:
             'detail': f'WHOIS returned no creation date for "{domain}" (privacy shield or unsupported TLD).',
         }
 
-    # Normalise to UTC-aware datetime so comparison with now() works correctly
+    # Normalize to UTC-aware datetime so comparison with now() works correctly
     if hasattr(creation, 'tzinfo') and creation.tzinfo is None:
         # Naive datetime — assume UTC (most WHOIS servers report UTC)
         creation = creation.replace(tzinfo=timezone.utc)

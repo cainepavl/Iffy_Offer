@@ -32,13 +32,13 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 - **Domain analysis** — detects homoglyph substitutions (`amaz0n.com`) and
   typosquatted domains (`amzon-careers.com`)
 - **Free-provider detection** — flags addresses from Gmail, Yahoo, Hotmail, etc.
-- **ATS platform recognition** — recognises legitimate recruiting platforms
+- **ATS platform recognition** — recognizes legitimate recruiting platforms
   (Greenhouse, Workday, Lever, LinkedIn, etc.)
 - **Domain age check** — WHOIS lookup flags brand-new domains (< 30 days)
 - **DNS record checks** — verifies MX, SPF, and DMARC records
 - **Header analysis** — detects display-name spoofing and Reply-To hijacking
   (when raw headers are provided)
-- **Risk score** — all signals combine into a single score with a colour-coded verdict
+- **Risk score** — all signals combine into a single score with a color-coded verdict
 - **Dark & light mode** — toggle with one click; high-contrast palette with Matrix-green pass indicators in both modes
 - **Larger default window** — results panel sized to show all checks without scrolling
 

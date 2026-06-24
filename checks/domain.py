@@ -1,7 +1,7 @@
 """
 checks/domain.py
 ----------------
-Analyses the sender's email domain against the claimed company name.
+Analyzes the sender's email domain against the claimed company name.
 
 Three distinct checks live here:
   1. Free provider detection — is this a gmail/yahoo/etc. address?
@@ -31,7 +31,7 @@ except ImportError:
 # Homoglyph substitution map
 # Scammers replace characters with visually similar ones to fool a quick glance.
 # For example: "amaz0n.com" looks like "amazon.com" at a glance.
-# We normalise both the domain and a clean version of it so we can compare them.
+# We normalize both the domain and a clean version of it so we can compare them.
 #
 # Key   = the fake character(s) a scammer uses
 # Value = the real character(s) it mimics

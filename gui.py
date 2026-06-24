@@ -46,7 +46,7 @@ from scorer           import build_score
 
 
 # ---------------------------------------------------------------------------
-# Colour palettes
+# Color palettes
 # ---------------------------------------------------------------------------
 
 DARK_PALETTE = {
@@ -143,7 +143,7 @@ class IffyOfferApp:
         self._build_results_section()
 
     def _build_title_bar(self):
-        """Top bar: app name left, subtitle centre-left, mode toggle right."""
+        """Top bar: app name left, subtitle center-left, mode toggle right."""
         self.title_frame = tk.Frame(self.root_frame)
         self.title_frame.pack(fill='x', padx=16, pady=(14, 6))
 
@@ -465,7 +465,7 @@ class IffyOfferApp:
             row.pack(fill='x', padx=6, pady=(4, 0))
             row.configure(bg=p['surface2'])
 
-            # Left accent stripe in the status colour
+            # Left accent stripe in the status color
             stripe = tk.Frame(row, width=4, bg=color)
             stripe.pack(side='left', fill='y')
             stripe.pack_propagate(False)
@@ -596,8 +596,8 @@ class IffyOfferApp:
         self.canvas.configure(bg=p['surface'])
         self.results_inner.configure(bg=p['surface'])
 
-        # Re-colour existing card rows (after a theme toggle mid-session).
-        # Stripes are tk.Frame children — skip them to preserve status colours.
+        # Re-color existing card rows (after a theme toggle mid-session).
+        # Stripes are tk.Frame children — skip them to preserve status colors.
         for widget in self.results_inner.winfo_children():
             if isinstance(widget, tk.Frame):
                 widget.configure(bg=p['surface2'], highlightbackground=p['border'])
