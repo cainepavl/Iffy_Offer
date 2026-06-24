@@ -39,7 +39,8 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 - **Header analysis** — detects display-name spoofing and Reply-To hijacking
   (when raw headers are provided)
 - **Risk score** — all signals combine into a single score with a colour-coded verdict
-- **Dark & light mode** — toggle with one click
+- **Dark & light mode** — toggle with one click; high-contrast palette with Matrix-green pass indicators in both modes
+- **Larger default window** — results panel sized to show all checks without scrolling
 
 ---
 
@@ -145,9 +146,9 @@ python main.py
 2. **Sender Email** — paste the *full* From address, including display name if shown
    (e.g. `Amazon Recruiting <hr@amaz0n-careers.net>`)
 
-3. **Raw Headers** *(optional)* — in your email client, choose "Show Original" or
-   "View Source" and paste the full header block into the text area.
-   This enables display-name spoofing and Reply-To mismatch checks.
+3. **Raw Headers** — paste the full header block from your email client ("Show Original" /
+   "View Source") into the text area. This is optional but enables display-name spoofing
+   and Reply-To mismatch checks.
 
 4. Click **Analyze Email** and wait a few seconds for DNS/WHOIS lookups to complete.
 
