@@ -39,7 +39,7 @@ Threading:
 """
 
 import tkinter as tk
-from tkinter import ttk, scrolledtext, filedialog
+from tkinter import ttk, scrolledtext, filedialog, messagebox
 import threading
 import queue
 import os
@@ -58,53 +58,55 @@ from scorer           import build_score
 # ---------------------------------------------------------------------------
 
 DARK_PALETTE = {
-    'bg':           '#1e1e2e',
-    'surface':      '#2a2a3d',
-    'surface2':     '#313244',
-    'border':       '#45475a',
-    'text':         '#cdd6f4',
-    'text_dim':     '#c5c8d8',
-    'accent':       '#89b4fa',
-    'accent_hover': '#b4d0ff',
+    'bg':           '#000000',
+    'surface':      '#0a1f0f',
+    'surface2':     '#0f2b16',
+    'border':       '#1b5e2e',
+    'text':         '#33ff66',
+    'text_dim':     '#4d9966',
+    'accent':       '#39ff14',
+    'accent_hover': '#7dff63',
     'ok':           '#00ff41',
-    'warning':      '#f9e2af',
-    'fail':         '#f38ba8',
-    'unknown':      '#cba6f7',
+    'warning':      '#ffe600',
+    'fail':         '#ff2d55',
+    'unknown':      '#c400ff',
     'verdict_low':  '#00ff41',
-    'verdict_med':  '#f9e2af',
-    'verdict_high': '#f38ba8',
-    'disclaimer':   '#6c7086',
-    'btn_bg':       '#89b4fa',
-    'btn_fg':       '#1e1e2e',
-    'clear_btn_bg': '#fab387',   # peach — warm contrast to the blue Analyze button
-    'clear_btn_fg': '#1e1e2e',
-    'mode_btn_bg':  '#313244',
-    'mode_btn_fg':  '#cdd6f4',
+    'verdict_med':  '#ffe600',
+    'verdict_high': '#ff2d55',
+    'disclaimer':   '#2f7a45',
+    'btn_bg':       '#39ff14',
+    'btn_fg':       '#000000',
+    'utility_btn_bg':        '#00e5ff',   # neon cyan — Clear / Browse / ? buttons
+    'utility_btn_fg':        '#000000',
+    'utility_btn_active_bg': '#66f5ff',
+    'mode_btn_bg':  '#0f2b16',
+    'mode_btn_fg':  '#33ff66',
 }
 
 LIGHT_PALETTE = {
-    'bg':           '#eff1f5',
+    'bg':           '#eef7ee',
     'surface':      '#ffffff',
-    'surface2':     '#e6e9ef',
-    'border':       '#ccd0da',
-    'text':         '#1e2030',
-    'text_dim':     '#3d4063',
-    'accent':       '#1e66f5',
-    'accent_hover': '#0a4ccf',
-    'ok':           '#00aa2e',
-    'warning':      '#df8e1d',
-    'fail':         '#d20f39',
-    'unknown':      '#8839ef',
-    'verdict_low':  '#00aa2e',
-    'verdict_med':  '#df8e1d',
-    'verdict_high': '#d20f39',
-    'disclaimer':   '#5c5f77',
-    'btn_bg':       '#1e66f5',
+    'surface2':     '#e3f3e5',
+    'border':       '#a9d9b3',
+    'text':         '#0b5c1f',
+    'text_dim':     '#2f6b45',
+    'accent':       '#0f8a3c',
+    'accent_hover': '#0a6b2e',
+    'ok':           '#0f8a3c',
+    'warning':      '#b8860b',
+    'fail':         '#c81d3f',
+    'unknown':      '#7a1fa2',
+    'verdict_low':  '#0f8a3c',
+    'verdict_med':  '#b8860b',
+    'verdict_high': '#c81d3f',
+    'disclaimer':   '#3f7a52',
+    'btn_bg':       '#0f8a3c',
     'btn_fg':       '#ffffff',
-    'clear_btn_bg': '#fe640b',   # orange — warm contrast to the blue Analyze button
-    'clear_btn_fg': '#ffffff',
-    'mode_btn_bg':  '#ccd0da',
-    'mode_btn_fg':  '#1e2030',
+    'utility_btn_bg':        '#0891b2',   # deep teal — Clear / Browse / ? buttons
+    'utility_btn_fg':        '#ffffff',
+    'utility_btn_active_bg': '#0a6f8f',
+    'mode_btn_bg':  '#e3f3e5',
+    'mode_btn_fg':  '#0b5c1f',
 }
 
 STATUS_ICONS = {
@@ -114,6 +116,12 @@ STATUS_ICONS = {
     'unknown': '?',
     'info':    'i',
 }
+
+PLACEHOLDER_TEXT = (
+    'Enter the Company Name/Sender Email above and paste in the raw headers '
+    'if you have them.\n\n'
+    'Then click Analyze Email.'
+)
 
 
 class IffyOfferApp:
@@ -225,13 +233,26 @@ class IffyOfferApp:
             font=('Helvetica', 10, 'bold'),
         ).grid(row=2, column=0, sticky='nw', pady=(10, 2))
 
+        self.header_hint_row = tk.Frame(self.input_frame)
+        self.header_hint_row.grid(row=2, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
+
         tk.Label(
-            self.input_frame,
+            self.header_hint_row,
             text='Paste the full header block from "Show Original" / "View Source" in your email client.',
             font=('Helvetica', 10),
-            wraplength=640,
+            wraplength=560,
             justify='left',
-        ).grid(row=2, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
+        ).pack(side='left')
+
+        self.header_help_btn = tk.Button(
+            self.header_hint_row,
+            text=' ? ',
+            font=('Helvetica', 9, 'bold'),
+            relief='flat',
+            cursor='hand2',
+            command=self._show_header_help,
+        )
+        self.header_help_btn.pack(side='left', padx=(6, 0))
 
         # Row 3: Header text area
         self.header_text = scrolledtext.ScrolledText(
@@ -252,13 +273,26 @@ class IffyOfferApp:
             font=('Helvetica', 10, 'bold'),
         ).grid(row=4, column=0, sticky='nw', pady=(10, 2))
 
+        self.body_hint_row = tk.Frame(self.input_frame)
+        self.body_hint_row.grid(row=4, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
+
         tk.Label(
-            self.input_frame,
+            self.body_hint_row,
             text='Paste the message text (optional) to check for scam language patterns.',
             font=('Helvetica', 10),
-            wraplength=640,
+            wraplength=560,
             justify='left',
-        ).grid(row=4, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
+        ).pack(side='left')
+
+        self.body_help_btn = tk.Button(
+            self.body_hint_row,
+            text=' ? ',
+            font=('Helvetica', 9, 'bold'),
+            relief='flat',
+            cursor='hand2',
+            command=self._show_body_help,
+        )
+        self.body_help_btn.pack(side='left', padx=(6, 0))
 
         # Row 5: Email body text area
         self.body_text = scrolledtext.ScrolledText(
@@ -298,6 +332,16 @@ class IffyOfferApp:
             font=('Helvetica', 9, 'italic'),
         )
         self.attachment_label.pack(side='left', padx=(10, 0))
+
+        self.attachment_help_btn = tk.Button(
+            self.attachment_row,
+            text=' ? ',
+            font=('Helvetica', 9, 'bold'),
+            relief='flat',
+            cursor='hand2',
+            command=self._show_attachment_help,
+        )
+        self.attachment_help_btn.pack(side='left', padx=(8, 0))
 
         self.input_frame.columnconfigure(1, weight=1)
 
@@ -367,8 +411,10 @@ class IffyOfferApp:
 
         self.placeholder = tk.Label(
             self.results_inner,
-            text='Enter company name and email address above, then click Analyze.',
+            text=PLACEHOLDER_TEXT,
             font=('Helvetica', 10, 'italic'),
+            wraplength=880,
+            justify='center',
         )
         self.placeholder.pack(pady=24)
 
@@ -411,12 +457,65 @@ class IffyOfferApp:
         p = self.palette
         self.placeholder = tk.Label(
             self.results_inner,
-            text='Enter company name and email address above, then click Analyze.',
+            text=PLACEHOLDER_TEXT,
             font=('Helvetica', 10, 'italic'),
+            wraplength=880,
+            justify='center',
             bg=p['surface'],
             fg=p['text_dim'],
         )
         self.placeholder.pack(pady=24)
+
+    def _show_header_help(self):
+        messagebox.showinfo(
+            'Where to find Raw Headers',
+            'Raw headers are the machine-readable metadata at the top of an '
+            'email — hidden by default in every mail client.\n\n'
+            'How to view them:\n'
+            '  •  Gmail (web): open the email → ⋮ menu → "Show original"\n'
+            '  •  Outlook (web): open the email → ⋯ → View → "View message source"\n'
+            '  •  Outlook (desktop): open the email → File → Properties → '
+            '"Internet headers" box\n'
+            '  •  Apple Mail: open the email → View menu → Message → "Raw Source"\n'
+            '  •  Thunderbird: open the email → View menu → "Message Source" (or Ctrl+U)\n'
+            '  •  Yahoo Mail: open the email → ⋯ menu → "View Raw Message"\n\n'
+            'What to copy:\n'
+            'Copy everything from the very first line down to (but not including) '
+            'the first completely blank line — that blank line marks where the '
+            'headers end and the message body begins. Paste that whole block into '
+            'the Raw Headers box above.'
+        )
+
+    def _show_body_help(self):
+        messagebox.showinfo(
+            'What to paste in Email Body',
+            'This is the plain text of the message itself — the part a human '
+            'would actually read, not the technical headers.\n\n'
+            'Open the email normally (not "View Source"), select all of the '
+            'message text, and paste it here. Include the greeting, the offer '
+            'details, and the sender\'s sign-off. You can skip long quoted '
+            'threads from earlier replies if present.\n\n'
+            'This box is optional, but pasting the body lets Iffy Offer check '
+            'for common scam-language patterns — upfront payment requests, '
+            'urgency language, generic greetings, and more.'
+        )
+
+    def _show_attachment_help(self):
+        messagebox.showinfo(
+            'About the Attachment check',
+            'To analyze an attachment, first save it from your email client '
+            'to a folder — do not open it. Saving just writes the file\'s bytes '
+            'to disk; it does not run anything. Every mail client has a "Save" '
+            'or download option that does this without opening the file.\n\n'
+            'Once it\'s saved, click Browse and select that file. Iffy Offer '
+            'only reads the file\'s raw bytes and structure for analysis — it '
+            'never opens, launches, or executes the attachment or anything '
+            'inside it, at any point.\n\n'
+            'This box is optional, but if the email mentions an attached '
+            'document or contract, checking it here can catch macro-laden '
+            'Office files, disguised executables, and other structural red '
+            'flags before you ever have to open the real thing.'
+        )
 
     def _browse_attachment(self):
         """Open a file picker and store the chosen path for analysis.
@@ -675,17 +774,33 @@ class IffyOfferApp:
         self.body_text.configure(bg=p['surface2'], fg=p['text'], insertbackground=p['text'])
 
         self.attachment_row.configure(bg=p['surface'])
-        self.attachment_browse_btn.configure(bg=p['mode_btn_bg'], fg=p['mode_btn_fg'],
-                                             activebackground=p['border'], activeforeground=p['text'])
+        self.attachment_browse_btn.configure(bg=p['utility_btn_bg'], fg=p['utility_btn_fg'],
+                                             activebackground=p['utility_btn_active_bg'],
+                                             activeforeground=p['utility_btn_fg'])
         self.attachment_label.configure(bg=p['surface'], fg=p['text_dim'])
+        self.attachment_help_btn.configure(bg=p['utility_btn_bg'], fg=p['utility_btn_fg'],
+                                           activebackground=p['utility_btn_active_bg'],
+                                           activeforeground=p['utility_btn_fg'])
+
+        for hint_row, help_btn in (
+            (self.header_hint_row, self.header_help_btn),
+            (self.body_hint_row, self.body_help_btn),
+        ):
+            hint_row.configure(bg=p['surface'])
+            help_btn.configure(bg=p['utility_btn_bg'], fg=p['utility_btn_fg'],
+                               activebackground=p['utility_btn_active_bg'],
+                               activeforeground=p['utility_btn_fg'])
+            for child in hint_row.winfo_children():
+                if isinstance(child, tk.Label):
+                    child.configure(bg=p['surface'], fg=p['text_dim'])
 
         for widget in self.input_frame.winfo_children():
             if isinstance(widget, tk.Label):
                 widget.configure(bg=p['surface'], fg=p['text_dim'])
 
-        self.clear_btn.configure(bg=p['clear_btn_bg'], fg=p['clear_btn_fg'],
-                                 activebackground=p['clear_btn_bg'],
-                                 activeforeground=p['clear_btn_fg'])
+        self.clear_btn.configure(bg=p['utility_btn_bg'], fg=p['utility_btn_fg'],
+                                 activebackground=p['utility_btn_active_bg'],
+                                 activeforeground=p['utility_btn_fg'])
         self.analyze_btn.configure(bg=p['btn_bg'], fg=p['btn_fg'],
                                    activebackground=p['accent_hover'],
                                    activeforeground=p['btn_fg'])
