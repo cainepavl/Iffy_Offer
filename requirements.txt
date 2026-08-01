@@ -3,8 +3,15 @@
 # dnspython  — DNS lookups for MX, SPF (TXT), and DMARC records.
 dnspython>=2.6
 
-# python-whois — WHOIS lookups to determine domain registration date.
-python-whois>=0.9
+# whoisit — RDAP lookups to determine domain registration date. RDAP is the
+# modern successor to legacy WHOIS (port 43), which ICANN sunset for most
+# gTLDs in early 2025.
+whoisit>=4.0
 
 # python-Levenshtein — Fast C-backed edit-distance for typosquatting detection.
 python-Levenshtein>=0.25
+
+# oletools — Static analysis of Office documents (VBA/XLM macro detection,
+# auto-exec triggers, suspicious API usage) for attachment scanning.
+# Never executes anything in the document; parses structure only.
+oletools>=0.60.1

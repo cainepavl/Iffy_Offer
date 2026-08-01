@@ -34,10 +34,18 @@ few seconds. It won't catch every scam, but it catches the obvious ones fast.
 - **Free-provider detection** — flags addresses from Gmail, Yahoo, Hotmail, etc.
 - **ATS platform recognition** — recognizes legitimate recruiting platforms
   (Greenhouse, Workday, Lever, LinkedIn, etc.)
-- **Domain age check** — WHOIS lookup flags brand-new domains (< 30 days)
+- **Domain age check** — RDAP lookup flags brand-new domains (< 30 days)
 - **DNS record checks** — verifies MX, SPF, and DMARC records
 - **Header analysis** — detects display-name spoofing and Reply-To hijacking
   (when raw headers are provided)
+- **Email body language analysis** — flags scam-language patterns in the pasted
+  message text: upfront payment requests, premature PII/financial-info asks,
+  pushes to move to WhatsApp/Telegram, urgency/pressure phrasing, instant-hire
+  claims, and generic greetings (all offline, no data leaves your machine)
+- **Attachment analysis** — flags dangerous or double file extensions,
+  file-signature/extension mismatches, VBA/XLM macros with auto-exec or
+  suspicious API use (via static parsing, never executed), embedded PDF
+  actions, archives smuggling an executable, and disk-image containers
 - **Risk score** — all signals combine into a single score with a color-coded verdict
 - **Dark & light mode** — toggle with one click; high-contrast palette with Matrix-green pass indicators in both modes
 - **Larger default window** — results panel sized to show all checks without scrolling
@@ -150,7 +158,15 @@ python main.py
    "View Source") into the text area. This is optional but enables display-name spoofing
    and Reply-To mismatch checks.
 
-4. Click **Analyze Email** and wait a few seconds for DNS/WHOIS lookups to complete.
+4. **Email Body** — paste the message text. This is optional but enables the
+   scam-language checks (upfront payment requests, urgency language, etc.).
+
+5. **Attachment** — click **Browse…** to select any attachment that came with
+   the email. This is optional but enables the static attachment analysis.
+   The file is only ever read as bytes — Iffy Offer never opens or executes it.
+
+6. Click **Analyze Email** and wait a few seconds for DNS/RDAP lookups and
+   attachment analysis to complete.
 
 ---
 
@@ -214,6 +230,20 @@ Each check contributes a signed integer delta to a cumulative risk score.
 | No DMARC record                  |    –10      |
 | Reply-To domain mismatch         |    –20      |
 | Display name spoofing            |    –15      |
+| Body: upfront payment request    |    –35      |
+| Body: premature PII/financial ask|    –25      |
+| Body: instant hire, no interview |    –15      |
+| Body: off-platform comms push    |    –15      |
+| Body: urgency/pressure language  |    –10      |
+| Body: generic greeting           |    –5       |
+| Attachment: dangerous/double extension |  –35  |
+| Attachment: signature mismatch         |  –30  |
+| Attachment: archive has executable     |  –30  |
+| Attachment: macros, high risk          |  –40  |
+| Attachment: macros, medium risk        |  –25  |
+| Attachment: macros, low risk           |  –15  |
+| Attachment: PDF embedded action/JS     |  –25  |
+| Attachment: disk-image container       |  –20  |
 
 **Verdict bands:**
 
@@ -227,13 +257,17 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 ## 🚫 What This Tool Does NOT Do
 
-- **Does not open, scan, or execute attachments** — attachment inspection would
-  require sandboxing that is beyond this tool's scope.
+- **Never opens or executes an attachment** — analysis is purely static,
+  reading bytes and file structure only. Nothing you attach is ever launched,
+  opened with its associated app, or run in any way.
+- **Is not an antivirus** — attachment analysis flags structural red flags
+  (macros, suspicious file types, etc.), not known-malware signatures.
 - **Does not follow or analyze links** in the email body.
 - **Does not contact the company** to verify the recruiter's identity.
 - **Does not send your data anywhere** — the only outbound network calls are
-  standard DNS and WHOIS queries for the domain you enter. No email content,
-  no personal information, and no usage data is ever transmitted.
+  standard DNS and RDAP queries for the domain you enter. No email content,
+  no attachment content, no personal information, and no usage data is ever
+  transmitted.
 - **Cannot guarantee accuracy** — a well-resourced attacker can pass some of
   these checks (e.g. by setting up SPF/DMARC on a fake domain). Use this tool
   as one input among several, not as a definitive verdict.
@@ -242,11 +276,15 @@ Each check contributes a signed integer delta to a cumulative risk score.
 
 ## ⚠️ Limitations
 
-- WHOIS lookups can fail for some TLDs (privacy shields, unsupported registries).
+- RDAP lookups can fail for some TLDs (privacy redaction, unsupported registries).
   The tool will show "unknown" for age rather than error out.
-- DNS checks require an internet connection.
+- DNS and RDAP checks require an internet connection.
 - The ATS platform and free-provider lists are curated manually — they may not
   cover every service.
+- The email body and attachment checks are heuristic — a well-crafted scam can
+  avoid every keyword pattern, and a legitimate email can occasionally trip a
+  weak signal (like a generic greeting). Treat every check as one signal among
+  several, not a standalone verdict.
 
 ---
 

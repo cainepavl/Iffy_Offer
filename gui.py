@@ -14,6 +14,11 @@ Layout (top to bottom):
   │  ┌─────────────────────────────────────────┐│
   │  │                                         ││  ← header text area
   │  └─────────────────────────────────────────┘│
+  │  Email Body (optional):                     │
+  │  ┌─────────────────────────────────────────┐│
+  │  │                                         ││  ← body text area
+  │  └─────────────────────────────────────────┘│
+  │  Attachment: [ Browse… ]  no file selected   │
   │                 [ Analyze Email ]            │  ← action button
   ├─────────────────────────────────────────────┤
   │  Results:                                   │  ← results frame (scrollable)
@@ -34,14 +39,17 @@ Threading:
 """
 
 import tkinter as tk
-from tkinter import ttk, scrolledtext
+from tkinter import ttk, scrolledtext, filedialog
 import threading
 import queue
+import os
 
 from checks.domain    import extract_domain, is_free_provider, is_ats_platform, check_domain_vs_company
 from checks.dns_check import check_mx_records, check_spf_record, check_dmarc_record
 from checks.whois_check import get_domain_age
 from checks.header    import parse_headers, check_display_name_mismatch, check_reply_to_mismatch
+from checks.content   import analyze_email_body
+from checks.attachment import analyze_attachment
 from scorer           import build_score
 
 
@@ -119,6 +127,8 @@ class IffyOfferApp:
         self._result_queue: queue.Queue = queue.Queue()
         # Detail labels stored so we can update wraplength when the window resizes
         self._detail_labels: list = []
+        # Path to the currently selected attachment, if any
+        self.attachment_path: str | None = None
 
         self._build_ui()
         self._apply_theme()
@@ -130,9 +140,9 @@ class IffyOfferApp:
     def _build_ui(self):
         """Create all widgets. Called once at startup."""
         self.root.title('Iffy Offer — Job Offer Email Checker')
-        self.root.geometry('960x1000')
+        self.root.geometry('960x1250')
         self.root.resizable(True, True)
-        self.root.minsize(740, 750)
+        self.root.minsize(740, 800)
 
         self.root_frame = tk.Frame(self.root)
         self.root_frame.pack(fill='both', expand=True)
@@ -234,6 +244,60 @@ class IffyOfferApp:
             wrap='none',
         )
         self.header_text.grid(row=3, column=0, columnspan=2, sticky='ew', pady=(0, 4))
+
+        # Row 4: Email body label + hint
+        tk.Label(
+            self.input_frame,
+            text='Email Body:',
+            font=('Helvetica', 10, 'bold'),
+        ).grid(row=4, column=0, sticky='nw', pady=(10, 2))
+
+        tk.Label(
+            self.input_frame,
+            text='Paste the message text (optional) to check for scam language patterns.',
+            font=('Helvetica', 10),
+            wraplength=640,
+            justify='left',
+        ).grid(row=4, column=1, sticky='w', padx=(10, 0), pady=(10, 2))
+
+        # Row 5: Email body text area
+        self.body_text = scrolledtext.ScrolledText(
+            self.input_frame,
+            font=('Courier', 9),
+            height=6,
+            width=60,
+            relief='flat',
+            bd=2,
+            wrap='word',
+        )
+        self.body_text.grid(row=5, column=0, columnspan=2, sticky='ew', pady=(0, 4))
+
+        # Row 6: Attachment picker
+        tk.Label(
+            self.input_frame,
+            text='Attachment:',
+            font=('Helvetica', 10, 'bold'),
+        ).grid(row=6, column=0, sticky='w', pady=(10, 6))
+
+        self.attachment_row = tk.Frame(self.input_frame)
+        self.attachment_row.grid(row=6, column=1, sticky='ew', padx=(10, 0), pady=(10, 6))
+
+        self.attachment_browse_btn = tk.Button(
+            self.attachment_row,
+            text='  Browse…  ',
+            font=('Helvetica', 10),
+            relief='flat',
+            cursor='hand2',
+            command=self._browse_attachment,
+        )
+        self.attachment_browse_btn.pack(side='left')
+
+        self.attachment_label = tk.Label(
+            self.attachment_row,
+            text='No file selected (optional — checks for macros, suspicious file types, etc.)',
+            font=('Helvetica', 9, 'italic'),
+        )
+        self.attachment_label.pack(side='left', padx=(10, 0))
 
         self.input_frame.columnconfigure(1, weight=1)
 
@@ -338,6 +402,8 @@ class IffyOfferApp:
         self.company_var.set('')
         self.email_var.set('')
         self.header_text.delete('1.0', 'end')
+        self.body_text.delete('1.0', 'end')
+        self._clear_attachment()
         self._clear_results()
         self.verdict_frame.pack_forget()
         self.disclaimer_label.pack_forget()
@@ -351,6 +417,23 @@ class IffyOfferApp:
             fg=p['text_dim'],
         )
         self.placeholder.pack(pady=24)
+
+    def _browse_attachment(self):
+        """Open a file picker and store the chosen path for analysis.
+
+        The file is never opened with its associated application here or
+        anywhere downstream — only read as bytes for static analysis."""
+        path = filedialog.askopenfilename(title='Select attachment to analyze')
+        if not path:
+            return
+        self.attachment_path = path
+        self.attachment_label.configure(text=os.path.basename(path))
+
+    def _clear_attachment(self):
+        self.attachment_path = None
+        self.attachment_label.configure(
+            text='No file selected (optional — checks for macros, suspicious file types, etc.)'
+        )
 
     def _start_analysis(self):
         """Validate inputs, disable the button, kick off the background worker."""
@@ -370,22 +453,27 @@ class IffyOfferApp:
             return
 
         raw_headers = self.header_text.get('1.0', 'end').strip()
+        raw_body    = self.body_text.get('1.0', 'end').strip()
+        attachment_path = self.attachment_path
 
         self.analyze_btn.configure(state='disabled', text='  Analyzing…  ')
-        self._show_status('Running checks (DNS and WHOIS may take a few seconds)…')
+        self._show_status('Running checks (DNS, WHOIS, and attachment analysis may take a few seconds)…')
         self._clear_results()
         self.verdict_frame.pack_forget()
         self.disclaimer_label.pack_forget()
 
         thread = threading.Thread(
             target=self._run_analysis_worker,
-            args=(company, email, domain, raw_headers),
+            args=(company, email, domain, raw_headers, raw_body, attachment_path),
             daemon=True,
         )
         thread.start()
         self.root.after(100, self._poll_result_queue)
 
-    def _run_analysis_worker(self, company: str, email: str, domain: str, raw_headers: str):
+    def _run_analysis_worker(
+        self, company: str, email: str, domain: str, raw_headers: str,
+        raw_body: str, attachment_path: str | None,
+    ):
         """Background thread — MUST NOT touch any Tkinter widgets."""
         try:
             free_prov   = is_free_provider(domain)
@@ -395,6 +483,9 @@ class IffyOfferApp:
             mx_info     = check_mx_records(domain)
             spf_info    = check_spf_record(domain)
             dmarc_info  = check_dmarc_record(domain)
+
+            body_info       = analyze_email_body(raw_body) if raw_body else None
+            attachment_info = analyze_attachment(attachment_path) if attachment_path else None
 
             display_mismatch  = None
             reply_to_mismatch = None
@@ -415,6 +506,8 @@ class IffyOfferApp:
                 dmarc_info=dmarc_info,
                 display_mismatch=display_mismatch,
                 reply_to_mismatch=reply_to_mismatch,
+                body_info=body_info,
+                attachment_info=attachment_info,
             )
             self._result_queue.put(('ok', output))
         except Exception as e:
@@ -579,6 +672,12 @@ class IffyOfferApp:
         self.company_entry.configure(bg=p['surface2'], fg=p['text'], insertbackground=p['text'])
         self.email_entry.configure(bg=p['surface2'], fg=p['text'], insertbackground=p['text'])
         self.header_text.configure(bg=p['surface2'], fg=p['text'], insertbackground=p['text'])
+        self.body_text.configure(bg=p['surface2'], fg=p['text'], insertbackground=p['text'])
+
+        self.attachment_row.configure(bg=p['surface'])
+        self.attachment_browse_btn.configure(bg=p['mode_btn_bg'], fg=p['mode_btn_fg'],
+                                             activebackground=p['border'], activeforeground=p['text'])
+        self.attachment_label.configure(bg=p['surface'], fg=p['text_dim'])
 
         for widget in self.input_frame.winfo_children():
             if isinstance(widget, tk.Label):

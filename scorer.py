@@ -29,6 +29,22 @@ Score deltas (all negative values mean "more suspicious"):
   Homoglyph detected    : –30   Deliberate visual deception — very serious.
   Reply-To mismatch     : –20   Replies are redirected away from sender.
   Display name mismatch : –15   Display name spoofing.
+
+  Body: upfront payment request   : –35   One of the strongest scam signals.
+  Body: premature PII/financial   : –25   Sensitive info asked for too early.
+  Body: instant hire, no interview: –15   Real hiring involves some vetting.
+  Body: off-platform comms push   : –15   Pushed off official channels.
+  Body: urgency/pressure language : –10   Weak alone, meaningful combined.
+  Body: generic greeting          : –5    Weakest signal; mass-sent messages.
+
+  Attachment: dangerous extension     : –35   Executable/script attachment.
+  Attachment: signature mismatch      : –30   Content doesn't match extension.
+  Attachment: archive has executable  : –30   Filter-bypass trick.
+  Attachment: macros, high risk       : –40   Auto-exec + suspicious API use.
+  Attachment: macros, medium risk     : –25   Auto-exec or suspicious API use.
+  Attachment: macros, low risk        : –15   Macros present, nothing flagged.
+  Attachment: PDF embedded action/JS  : –25   Embedded script or auto-launch.
+  Attachment: disk-image container    : –20   Known malware-delivery pattern.
 """
 
 from dataclasses import dataclass, field
@@ -75,6 +91,8 @@ def build_score(
     dmarc_info:        dict,   # from checks.dns_check.check_dmarc_record()
     display_mismatch:  dict | None = None,  # from checks.header.check_display_name_mismatch()
     reply_to_mismatch: dict | None = None,  # from checks.header.check_reply_to_mismatch()
+    body_info:         dict | None = None,  # from checks.content.analyze_email_body()
+    attachment_info:   dict | None = None,  # from checks.attachment.analyze_attachment()
 ) -> ScorerOutput:
     """
     Combine all check results into a ScorerOutput with total score and verdict.
@@ -331,6 +349,77 @@ def build_score(
                 detail=reply_to_mismatch.get('detail', 'Reply-To is consistent or not present.'),
                 delta=0,
             ))
+
+    # ------------------------------------------------------------------
+    # 10. Body language checks (optional — only run if body text was provided)
+    # Each entry: (sub-check key, display name, delta if detected, status if detected)
+    # ------------------------------------------------------------------
+    if body_info is not None:
+        BODY_CHECKS = [
+            ('upfront_payment',   'Upfront Payment Request',        -35, 'fail'),
+            ('premature_pii',     'Premature PII/Financial Request', -25, 'fail'),
+            ('instant_hire',      'Instant Hire / No Interview',     -15, 'warning'),
+            ('offplatform_comms', 'Off-Platform Communication Push', -15, 'warning'),
+            ('urgency_language',  'Urgency/Pressure Language',       -10, 'warning'),
+            ('generic_greeting',  'Generic Greeting',                 -5, 'warning'),
+        ]
+        for key, name, delta, fail_status in BODY_CHECKS:
+            sub = body_info.get(key)
+            if sub is None:
+                continue
+            if sub.get('detected'):
+                results.append(CheckResult(name=name, status=fail_status, detail=sub['detail'], delta=delta))
+                score += delta
+            else:
+                results.append(CheckResult(name=name, status='ok', detail=sub['detail'], delta=0))
+
+    # ------------------------------------------------------------------
+    # 11. Attachment checks (optional — only run if a file was selected)
+    # ------------------------------------------------------------------
+    if attachment_info is not None:
+        if attachment_info.get('error'):
+            results.append(CheckResult(
+                name='Attachment Analysis',
+                status='unknown',
+                detail=attachment_info['error'],
+                delta=0,
+            ))
+        else:
+            ATTACHMENT_CHECKS = [
+                ('extension_flag',      'Attachment File Type',        -35, 'fail'),
+                ('signature_mismatch',  'Attachment Signature Check',  -30, 'fail'),
+                ('archive_contents',    'Attachment Archive Contents', -30, 'fail'),
+                ('pdf_action_flag',     'Attachment PDF Actions',      -25, 'fail'),
+                ('container_flag',      'Attachment Container Type',   -20, 'fail'),
+            ]
+            for key, name, delta, fail_status in ATTACHMENT_CHECKS:
+                sub = attachment_info.get(key)
+                if sub is None:
+                    continue
+                if sub.get('detected') is None:
+                    results.append(CheckResult(name=name, status='unknown', detail=sub['detail'], delta=0))
+                elif sub.get('detected'):
+                    results.append(CheckResult(name=name, status=fail_status, detail=sub['detail'], delta=delta))
+                    score += delta
+                else:
+                    results.append(CheckResult(name=name, status='ok', detail=sub['detail'], delta=0))
+
+            # Macro analysis has three severities instead of a single delta, so
+            # it's scored separately rather than through the table above.
+            macro = attachment_info.get('macro_analysis')
+            if macro is not None:
+                if macro.get('detected') is None:
+                    results.append(CheckResult(name='Attachment Macros', status='unknown', detail=macro['detail'], delta=0))
+                elif not macro.get('detected'):
+                    results.append(CheckResult(name='Attachment Macros', status='ok', detail=macro['detail'], delta=0))
+                else:
+                    severity_delta = {'high': -40, 'medium': -25, 'low': -15}.get(macro.get('severity'), -15)
+                    severity_status = 'fail' if severity_delta <= -25 else 'warning'
+                    results.append(CheckResult(
+                        name='Attachment Macros', status=severity_status,
+                        detail=macro['detail'], delta=severity_delta,
+                    ))
+                    score += severity_delta
 
     # ------------------------------------------------------------------
     # Final verdict
